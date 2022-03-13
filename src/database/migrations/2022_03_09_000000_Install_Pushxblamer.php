@@ -23,6 +23,8 @@ class InstallPushxblamer extends Migration
         $schedule->allow_maintenance = 0;
 
         $schedule->save();
+
+        UpdatePushxQueue::dispatch();
     }
 
     /**
