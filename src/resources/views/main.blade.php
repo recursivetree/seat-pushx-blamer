@@ -14,14 +14,24 @@
                     </div>
                     <div class="card-body">
                         <p class="card-text">
-                        <div class="text-center">
-
-                            {!! img('characters', 'portrait', $blamed->character_id, 256, ['class' => 'profile-user-img img-fluid img-circle']) !!}
-
-                        </div>
-                        <h3 class="profile-username text-center">
-                            {{ $blamed->character_name }}
-                        </h3>
+                            @isset($blamed)
+                                <div class="text-center">
+                                    {!! img('characters', 'portrait', $blamed->character_id, 256, ['class' => 'profile-user-img img-fluid img-circle']) !!}
+                                </div>
+                                <h3 class="profile-username text-center">
+                                    {{ $blamed->character_name }}
+                                </h3>
+                            @else
+                                <div class="text-center">
+                                    {!! img('characters', 'portrait', 2119442600, 256, ['class' => 'profile-user-img img-fluid img-circle']) !!}
+                                </div>
+                                <h3 class="profile-username text-center">
+                                    It seem like no one is guilty of blocking the queue
+                                </h3>
+                                <p class="text-center">
+                                    I would advise against creating a contract right now, as it will make you guilty of blocking the queue.
+                                </p>
+                            @endisset
                         </p>
                     </div>
                 </div>
@@ -29,18 +39,20 @@
         </div>
         <div class="row">
 
-            <div class="col-sm">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Share of contracts</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            <canvas id="piechart"></canvas>
-                        </p>
+            @isset($blamed)
+                <div class="col-sm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Share of contracts</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <canvas id="piechart"></canvas>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endisset
 
             <div class="col-sm">
                 <div class="card">
@@ -84,34 +96,36 @@
 @stop
 
 @push('javascript')
-    <script>
-        const blamed_character_name = {!! json_encode($blamed->character_name) !!};
-        const blamed_character_amount = {!! json_encode($blamed->contract_count) !!};
-        const total_contracts = {!! json_encode($queue->outstanding) !!};
+    @isset($blamed)
+        <script>
+            const blamed_character_name = {!! json_encode($blamed->character_name) !!};
+            const blamed_character_amount = {!! json_encode($blamed->contract_count) !!};
+            const total_contracts = {!! json_encode($queue->outstanding) !!};
 
-        $.get("https://koe-eve.com/api/pushx/queue", function (data) {
-            console.log(data)
-        })
+            $.get("https://koe-eve.com/api/pushx/queue", function (data) {
+                console.log(data)
+            })
 
-        new Chart($("#piechart"), {
-            type: "pie",
-            data: {
-                labels: [
-                    blamed_character_name,
-                    'Others',
-                ],
-                datasets: [
-                    {
-                        data: [blamed_character_amount, total_contracts],
-                        backgroundColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(54, 162, 235)',
-                        ],
-                        hoverOffset: 4
-                    }
-                ]
-            }
-        })
-    </script>
+            new Chart($("#piechart"), {
+                type: "pie",
+                data: {
+                    labels: [
+                        blamed_character_name,
+                        'Others',
+                    ],
+                    datasets: [
+                        {
+                            data: [blamed_character_amount, total_contracts],
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)',
+                            ],
+                            hoverOffset: 4
+                        }
+                    ]
+                }
+            })
+        </script>
+    @endisset
 @endpush
 
