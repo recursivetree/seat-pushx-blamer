@@ -14,8 +14,6 @@ class InstallPushxblamer extends Migration
      */
     public function up()
     {
-        UpdatePushxQueue::dispatch();
-
         $schedule = new Schedule();
         $schedule->command = "pushxblamer:update";
         $schedule->expression = "0/30 * * * *";
