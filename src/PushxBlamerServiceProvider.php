@@ -36,12 +36,12 @@ class PushxBlamerServiceProvider extends AbstractSeatPlugin
 
     public function getName(): string
     {
-        return 'SeAT Pushx Balmer Monitor';
+        return 'SeAT Pushx Blamer';
     }
 
     public function getPackageRepositoryUrl(): string
     {
-        return 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        return 'https://github.com/recursivetree/seat-pushx-blamer';
     }
 
     public function getPackagistPackageName(): string
