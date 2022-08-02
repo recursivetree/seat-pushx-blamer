@@ -25,8 +25,6 @@ class PushxBlamerServiceProvider extends AbstractSeatPlugin
                 UpdatePushxQueue::dispatch();
             }
         });
-
-        //UpdatePushxQueue::dispatch();
     }
 
     public function register(){

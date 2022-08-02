@@ -75,14 +75,6 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <b>Ongoing</b>
-                                            </td>
-                                            <td>
-                                                {{ $queue->ongoing }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
                                                 <b>
                                                     Completed(Last day):
                                                 </b>

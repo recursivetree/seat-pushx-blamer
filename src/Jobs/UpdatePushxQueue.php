@@ -23,6 +23,7 @@ class UpdatePushxQueue implements ShouldQueue
     public function handle(){
         //store queue stats
         $queueStats = $this->fetchQueueStats();
+
         if($queueStats) {
             setting(["pushxqueuestatus", json_encode($queueStats)], true);
         } else {
@@ -58,15 +59,34 @@ class UpdatePushxQueue implements ShouldQueue
         $client = new Client([
             'timeout'  => 5.0,
         ]);
-        $res = $client->request('GET', 'https://koe-eve.com/api/pushx/queue');
+        $res = $client->request('GET', 'https://www.pushx.net/');
 
-        if($res->getStatusCode() !== 200){
-            $this->fail(new Exception("Failed to load PushX queue status!"));
+        $status = $res->getStatusCode();
+        if($status !== 200){
+            $this->fail(new Exception("The PushX website returns with code $status (expected 200 OK)"));
         }
 
-        //decode and reencode to make sure it is correct
-        $data = json_decode($res->getBody());
+        $html = preg_replace('~\R~u', "\n", $res->getBody());
+        $matches = [];
+        preg_match_all("/Outstanding.*?(?<outstanding>\d+)/m",$html, $matches);
+        if(count($matches["outstanding"])<1){
+            $this->fail(new Exception("Failed to grep the outstanding contract data. If there isn't already one, open an issue on github https://github.com/recursivetree/seat-pushx-blamer"));
+            return;
+        }
+        $outstanding = intval($matches["outstanding"][0]);
 
-        return $data;
+        $html = preg_replace('~\R~u', "\n", $res->getBody());
+        $matches = [];
+        preg_match_all("/Completed.*?(?<completed>\d+)/m",$html, $matches);
+        if(count($matches["completed"])<1){
+            $this->fail(new Exception("Failed to grep the completed contract data. If there isn't already one, open an issue on github https://github.com/recursivetree/seat-pushx-blamer"));
+            return;
+        }
+        $completed = intval($matches["completed"][0]);
+
+        return [
+            "outstanding"=>$outstanding,
+            "dailycompleted"=>$completed
+        ];
     }
 }
