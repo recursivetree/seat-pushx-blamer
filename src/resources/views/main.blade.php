@@ -5,6 +5,8 @@
 
 
 @section('full')
+    @include("treelib::giveaway")
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm">
